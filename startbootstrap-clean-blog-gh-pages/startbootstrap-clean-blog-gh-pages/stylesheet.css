@@ -1,0 +1,36 @@
+p {
+    color: rgb(0, 0, 0);               
+    font-family: 'Arial', sans-serif;  
+  }
+
+
+body{
+    background-color: rgb(200, 228, 255);
+    font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    text-align: center;
+    border: 10px solid rgb(50, 50, 50);
+    margin: 20px;
+    padding: 10px;
+}
+
+ul{
+    padding-left: 0;
+    list-style-position: outside;
+    margin: 0 auto;
+    display: table;
+    text-align: center;
+}
+
+.mainbox{
+    font-size: 21px;
+}
+
+.return{
+    font-size: 14px;
+    font-weight: bold;
+    
+}
+
+.prof{
+    font-size: 13px;
+}

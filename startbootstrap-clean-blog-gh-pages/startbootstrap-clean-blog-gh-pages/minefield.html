@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Minesweeper</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin-top: 20px;
+    }
+    .board {
+      display: inline-grid;
+      grid-template-columns: repeat(10, 30px);
+      gap: 2px;
+    }
+    .cell {
+      width: 30px;
+      height: 30px;
+      background-color: lightgray;
+      border: 1px solid #888;
+      font-size: 16px;
+      font-weight: bold;
+      line-height: 30px;
+      text-align: center;
+      cursor: pointer;
+      user-select: none;
+    }
+    .cell.revealed {
+      background-color: #ddd;
+      cursor: default;
+    }
+    .cell.mine {
+      background-color: red;
+    }
+  </style>
+</head>
+<body>
+    <nav>
+        <a href="ScratchPage.html">back</a>
+    </nav>
+  <h1>Minesweeper</h1>
+  <div id="board" class="board"></div>
+  <script>
+    const boardSize = 10;
+    const mineCount = 10;
+    const board = document.getElementById('board');
+    const cells = [];
+
+    function createBoard() {
+      const minePositions = generateMines(boardSize * boardSize, mineCount);
+      for (let i = 0; i < boardSize * boardSize; i++) {
+        const cell = document.createElement('div');
+        cell.classList.add('cell');
+        cell.dataset.index = i;
+        board.appendChild(cell);
+        cells.push(cell);
+        if (minePositions.includes(i)) {
+          cell.dataset.mine = "true";
+        }
+        cell.addEventListener('click', revealCell);
+      }
+    }
+
+    function generateMines(size, count) {
+      const positions = [];
+      while (positions.length < count) {
+        const pos = Math.floor(Math.random() * size);
+        if (!positions.includes(pos)) {
+          positions.push(pos);
+        }
+      }
+      return positions;
+    }
+
+    function revealCell(e) {
+      const cell = e.target;
+      const index = +cell.dataset.index;
+      if (cell.classList.contains('revealed')) return;
+
+      cell.classList.add('revealed');
+
+      if (cell.dataset.mine === "true") {
+        cell.classList.add('mine');
+        cell.textContent = "💣";
+        alert("Game Over!");
+        revealAll();
+        return;
+      }
+
+      const neighbors = getNeighbors(index);
+      const mineCount = neighbors.filter(i => cells[i].dataset.mine === "true").length;
+      if (mineCount > 0) {
+        cell.textContent = mineCount;
+      } else {
+        neighbors.forEach(i => revealCell({ target: cells[i] }));
+      }
+    }
+
+    function revealAll() {
+      cells.forEach(cell => {
+        if (cell.dataset.mine === "true") {
+          cell.classList.add('revealed', 'mine');
+          cell.textContent = "💣";
+        }
+        cell.removeEventListener('click', revealCell);
+      });
+    }
+
+    function getNeighbors(index) {
+      const x = index % boardSize;
+      const y = Math.floor(index / boardSize);
+      const neighbors = [];
+      for (let dy = -1; dy <= 1; dy++) {
+        for (let dx = -1; dx <= 1; dx++) {
+          if (dx === 0 && dy === 0) continue;
+          const nx = x + dx;
+          const ny = y + dy;
+          if (nx >= 0 && nx < boardSize && ny >= 0 && ny < boardSize) {
+            neighbors.push(ny * boardSize + nx);
+          }
+        }
+      }
+      return neighbors;
+    }
+
+    createBoard();
+  </script>
+  <br>
+  <br>
+  <br>
+  <p>
+    Minesweeper is a puzzle game where the objective is to uncover all the safe squares on a grid without clicking on any hidden mines. When you click a square, it either reveals a number or nothing at all—the numbers indicate how many mines are in the eight surrounding squares. Using these numbers, you deduce which nearby squares are safe and which likely contain mines. The challenge is to clear the board without triggering a mine, relying on logic and careful deduction rather than guessing.
+  </p>
+</body>
+</html>
